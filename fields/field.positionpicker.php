@@ -39,7 +39,7 @@
 			// Show the sections:
 			$sm = new SectionManager($this);
 			$sections = $sm->fetch();
-			$options = array();
+            $options = array();
             $options[] = array('0', false, ' ');
 			foreach($sections as $section)
 			{
@@ -58,15 +58,23 @@
                 $group->appendChild($label);
             }
 
-			$label = Widget::Label(__('Or select a section to dynamicly select an image from:'));
-			$selectBox = Widget::Select('fields['.$this->get('sortorder').'][section_id]', $options);
-			$label->appendChild($selectBox);
+            $label = Widget::Label(__('Or select a section to dynamicly select an image from:'));
+            $selectBox = Widget::Select('fields['.$this->get('sortorder').'][section_id]', $options);
+            $label->appendChild($selectBox);
             if(isset($errors['section_id']))
             {
                 $group->appendChild(Widget::wrapFormElementWithError($label, $errors['section_id']));
             } else {
                 $group->appendChild($label);
             }
+
+
+            $label = Widget::Label();
+            $input = Widget::Input("fields[{$order}][unit]", 'yes', 'checkbox');
+            if ($this->get('unit') == 'yes') $input->setAttribute('checked', 'checked');
+            $label->setValue(__('%s Show results in percentage', array($input->generate())));
+            $group->appendChild($label);
+
 
             $wrapper->appendChild($group);
 
@@ -100,6 +108,7 @@
 			$fields['field_id'] = $id;
 			$fields['section_id'] = $this->get('section_id');
             $fields['image_url'] = $this->get('image_url');
+            $fields['unit'] = $this->get('unit');
             if($fields['section_id'] == 0)
             {
                 $fields['section_id'] = null;
