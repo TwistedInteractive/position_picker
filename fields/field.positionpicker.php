@@ -196,10 +196,15 @@
 				$vars->appendChild(new XMLElement('var', $val.'*'.$width.'*'.$height, array('rel'=>$id)));
 			}
 			$label->appendChild($vars);
+			
 			$value = $data == null ? null : $data['xpos'].','.$data['ypos'];
 			$label->appendChild(Widget::Input('fields['.$this->get('element_name').'][position]', (strlen($value) != 0 ? $value : NULL), 'hidden'));
 			if($flagWithError != NULL) $wrapper->appendChild(Widget::wrapFormElementWithError($label, $flagWithError));
 			else $wrapper->appendChild($label);
+			
+			$label->appendChild(Widget::Input('fields['.$this->get('element_name').'][unit]', $this->get('unit'), 'hidden'));
+			$wrapper->appendChild($label);
+			
 		}
 		
         /**
@@ -294,10 +299,8 @@
                     $section = Symphony::Database()->fetchVar('handle', 0, 'SELECT `handle` FROM `tbl_sections` WHERE `id` = '.$info['section_id'].';');
                     $url = URL.'/symphony/publish/'.$section.'/edit/'.$related_item[0]->get('id').'/';
                     $name = 'Unknown entry';
-                    foreach($fields as $field)
-                    {
-                        if(isset($field['value']))
-                        {
+                    foreach($fields as $field) {
+                        if(isset($field['value'])) {
                             $name = $field['value'];
                             break;
                         }
