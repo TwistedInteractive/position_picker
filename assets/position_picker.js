@@ -26,8 +26,7 @@ jQuery(function(){
 			$("div.position_picker img.pic").width(maxWidth);
 			$("div.position_picker img.pic").height(originalHeight * ratio);
 			
-			
-			if($().val == 'percentage') {
+			if($('#unit_type').val() == 'percentage') {
 				$("div.position_picker img.pic").click(function(e){
 					var pixelOffsetX = e.pageX - $(this).offset().left;
 			        var pixelOffsetY = e.pageY - $(this).offset().top;
@@ -44,7 +43,7 @@ jQuery(function(){
 				if(coords.length == 2) {
 					$("div.position_picker img.crosshair", $(this).parent()).css({left: (coords[0] -1.6) + "%", top: coords[1] + "%"});
 				}
-			else{
+			} else{
 				$("div.position_picker img.pic").click(function(e){
 					var offsetX = e.pageX - $(this).offset().left;
 					var offsetY = e.pageY - $(this).offset().top;

@@ -202,8 +202,21 @@
 			if($flagWithError != NULL) $wrapper->appendChild(Widget::wrapFormElementWithError($label, $flagWithError));
 			else $wrapper->appendChild($label);
 			
-			$label->appendChild(Widget::Input('fields['.$this->get('element_name').'][unit]', $this->get('unit'), 'hidden'));
-			$wrapper->appendChild($label);
+
+            
+            $attributes = array(
+                array(
+                    'id', 
+                    'unit_type'
+                ), 
+                array(
+                    'class', 
+                    'Percentage'
+                )
+            );
+			$unit_field = Widget::Input('fields['.$this->get('element_name').'][unit]', $this->get('unit'), 'hidden');
+            $unit_field->setAttribute('id', 'unit_type');
+			$wrapper->appendChild($unit_field);
 			
 		}
 		
