@@ -202,18 +202,6 @@
 			if($flagWithError != NULL) $wrapper->appendChild(Widget::wrapFormElementWithError($label, $flagWithError));
 			else $wrapper->appendChild($label);
 			
-
-            
-            $attributes = array(
-                array(
-                    'id', 
-                    'unit_type'
-                ), 
-                array(
-                    'class', 
-                    'Percentage'
-                )
-            );
 			$unit_field = Widget::Input('fields['.$this->get('element_name').'][unit]', $this->get('unit'), 'hidden');
             $unit_field->setAttribute('id', 'unit_type');
 			$wrapper->appendChild($unit_field);
@@ -250,7 +238,7 @@
 			$status = self::__OK__;
 			
 			$coords = explode(',', $data['position']);
-			
+
 			if(count($coords) != 2) {
 				$coords = array(0, 0);
 			}
@@ -258,7 +246,7 @@
 			$result = array(
 				'relation_id' => $data['relation_id'],
 				'xpos' => $coords[0],
-				'ypos' => $coords[1]
+                'ypos' => $coords[1]
 			);
 
             if($data['relation_id'] == -1) {
@@ -278,10 +266,17 @@
          * @return void
          */
 		public function appendFormattedElement(&$wrapper, $data, $encode=false) {
+
+            if($this->get('unit') == 'percentage') {
+                $unit = '%';
+            } else {
+                $unit = 'px';
+            }
+
 			if($this->get('section_id') != null) {
                 $wrapper->appendChild(
                     new XMLElement(
-                        $this->get('element_name'), null, array('relation-id' => $data['relation_id'], 'xpos' => $data['xpos'], 'ypos' => $data['ypos'])
+                        $this->get('element_name'), null, array('relation-id' => $data['relation_id'], 'xpos' => $data['xpos'], 'ypos' => $data['ypos'], 'unit' => $unit)
                     )
                 );
                 // Also pass the ID to the driver so it can output it in the parameters:
@@ -290,7 +285,7 @@
                 // Static image:
                 $wrapper->appendChild(
                     new XMLElement(
-                        $this->get('element_name'), null, array('image-url' => $this->get('image_url'), 'xpos' => $data['xpos'], 'ypos' => $data['ypos'])
+                        $this->get('element_name'), null, array('image-url' => $this->get('image_url'), 'xpos' => $data['xpos'], 'ypos' => $data['ypos'], 'unit' => $unit)
                     )
                 );
             }
