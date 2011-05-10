@@ -7,13 +7,15 @@ jQuery(function(){
 			if(id == -1) {
                 // Static image
                 var info = $("div.position_picker_vars var[rel=url]").text().split('*');
-                var file = Symphony.WEBSITE + info[0];
+                var file = info[0];
                 $("div.field-positionpicker select").hide();
             } else {
                 var info = $("div.position_picker_vars var[rel=" + id + "]").text().split('*');
                 var file = Symphony.WEBSITE + '/workspace' + info[0];
             }
-
+			
+			console.log(info);
+			
 			var originalWidth = info[1];
 			var originalHeight = info[2];
 			var ratio = maxWidth / originalWidth;

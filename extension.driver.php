@@ -1,5 +1,5 @@
 <?php
-	
+
 	class extension_position_picker extends Extension {
 
         private $_ids;
@@ -12,7 +12,10 @@
             parent::__construct($context);
             $this->_ids = array();
         }
-        
+
+        /**
+         * About the author
+         */
 		public function about() {
 			return array(
 				'name'			=> 'Field: Position Picker',
@@ -34,7 +37,7 @@
 		public function uninstall() {
             $this->_Parent->Database->query("DROP TABLE `tbl_fields_positionpicker`");
 		}
-		
+
         /**
          * Installation script
          * @return void
@@ -73,14 +76,13 @@
                 )
 			);
 		}
-		
+
         /**
          * Add the id's of all picker instances to the frontend, to provide a way to retreive the related entries.
          * @param  $context     The context, provided by Symphony
          * @return void
          */
-        public function addParameters($context)
-        {
+        public function addParameters($context) {
             // Add the used ID's as a parameter so they can be used by other data sources:
             $this->_ids = array_unique($this->_ids);
             sort($this->_ids);
@@ -92,12 +94,10 @@
          * @param  $id          The ID
          * @return void
          */
-        public function addID($id)
-        {
+        public function addID($id) {
             $this->_ids[] = $id;
         }
-		
-		
+
         /**
          * Add some javascript and a stylesheet to the head of the page to provide the picker-functionality.
          * @param  $context     The context, provided by Symphony
@@ -109,5 +109,4 @@
 		}
 
 	}
-	
 ?>

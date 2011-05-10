@@ -191,7 +191,11 @@
 			$vars = new XMLElement('div', null, array('class'=>'position_picker_vars'));
 			foreach($files as $id => $val) {
 				// Get image sizes:
-				$image = $id == 'url' ? URL.$val : URL.'/workspace' . $val;
+				if ($this->get('section_id') != null) {
+					$image = $id == 'url' ? URL.$val : URL.'/workspace' . $val;
+				} else {
+					$image = $val;
+				}
 				list($width, $height) = getimagesize($image);
 				$vars->appendChild(new XMLElement('var', $val.'*'.$width.'*'.$height, array('rel'=>$id)));
 			}
