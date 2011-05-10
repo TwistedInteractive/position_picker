@@ -14,8 +14,6 @@ jQuery(function(){
                 var file = Symphony.WEBSITE + '/workspace' + info[0];
             }
 			
-			console.log(info);
-			
 			var originalWidth = info[1];
 			var originalHeight = info[2];
 			var ratio = maxWidth / originalWidth;
@@ -35,15 +33,18 @@ jQuery(function(){
 			        
 					var offsetX = (pixelOffsetX / imageWidth)*100;
 			        var offsetY = (pixelOffsetY / imageHeight)*100;
-
-					$("img.crosshair", $(this).parent()).css({left: (offsetX -1.6) + '%', top: offsetY + '%'});
+					
+					var cursorSize = (3.2 * ratio) / 2;
+					
+					$("img.crosshair", $(this).parent()).css({left: (offsetX - cursorSize) + '%', top: (offsetY - cursorSize) + '%'});
 					$("input[type=hidden]", $(this).parent().parent()).val(offsetX + ',' + offsetY);
 					console.log($("input[type=hidden]", $(this).parent().parent()).val());
 					return false;
 				});
 				coords = $("input[type=hidden]", $(this).parent()).val().split(',');
 				if(coords.length == 2) {
-					$("div.position_picker img.crosshair", $(this).parent()).css({left: (coords[0] -1.6) + "%", top: (coords[1] -1.6) + "%"});
+					var cursorSize = (3.2 * ratio) / 2;
+					$("div.position_picker img.crosshair", $(this).parent()).css({left: (coords[0] - cursorSize) + "%", top: (coords[1] - cursorSize) + "%"});
 				}
 			} else{
 				$("div.position_picker img.pic").click(function(e){
