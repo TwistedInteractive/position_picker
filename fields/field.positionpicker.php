@@ -2,8 +2,7 @@
 
 	require_once(TOOLKIT . '/class.xsltprocess.php');
 
-	Class fieldPositionpicker extends Field
-    {
+	Class fieldPositionpicker extends Field {
 
         protected $_driver;
 
@@ -11,8 +10,7 @@
          * The constructor
          * @param  $parent      The parent, provided by Symphony
          */
-		public function __construct(&$parent)
-        {
+		public function __construct(&$parent) {
 			parent::__construct($parent);
 			$this->_name = __('Position Picker');
 			$this->_required = true;
@@ -32,53 +30,67 @@
          * @param null $errors  Errors
          * @return void
          */
-		public function displaySettingsPanel(&$wrapper, $errors = null)
-        {
+		public function displaySettingsPanel(&$wrapper, $errors = null) {
 			parent::displaySettingsPanel($wrapper, $errors);
 			
 			// Show the sections:
 			$sm = new SectionManager($this);
 			$sections = $sm->fetch();
-			$options = array();
+            $options = array();
             $options[] = array('0', false, ' ');
-			foreach($sections as $section)
-			{
+            
+			foreach($sections as $section) {
 				$name = $section->get('name');
 				$id   = $section->get('id');
 				$selected  = $id == $this->get('section_id');
 				$options[] = array($id, $selected, $name);
 			}
+			
             $group = new XMLElement('div', null, array('class'=>'group'));
             $label = Widget::Label(__('Enter the URL of the image:'));
             $label->appendChild(Widget::Input('fields['.$this->get('sortorder').'][image_url]', $this->get('image_url')));
-            if(isset($errors['image_url']))
-            {
+            if(isset($errors['image_url'])) {
                 $group->appendChild(Widget::wrapFormElementWithError($label, $errors['image_url']));
             } else {
                 $group->appendChild($label);
             }
 
-			$label = Widget::Label(__('Or select a section to dynamicly select an image from:'));
-			$selectBox = Widget::Select('fields['.$this->get('sortorder').'][section_id]', $options);
-			$label->appendChild($selectBox);
-            if(isset($errors['section_id']))
-            {
+            $label = Widget::Label(__('Or select a section to dynamicly select an image from:'));
+            $selectBox = Widget::Select('fields['.$this->get('sortorder').'][section_id]', $options);
+            $label->appendChild($selectBox);
+            if(isset($errors['section_id'])) {
                 $group->appendChild(Widget::wrapFormElementWithError($label, $errors['section_id']));
             } else {
                 $group->appendChild($label);
             }
 
             $wrapper->appendChild($group);
+                        
+            
+			$label = Widget::Label('Unit type');
+			$units = array(
+				array(
+					'pixels', 
+					($this->get('unit') == 'pixels'), 
+					'Pixels'
+				), 
+				array(
+					'percentage', 
+					($this->get('unit') == 'percentage'), 
+					'Percentage'
+				)
+			);
+			$label->appendChild(Widget::Select('fields['.$this->get('sortorder').'][unit]', $units));
+			$wrapper->appendChild($label);
+            
 
 			$this->appendRequiredCheckbox($wrapper);
 			$this->appendShowColumnCheckbox($wrapper);
 		}
 
-        public function checkFields(Array &$errors, $checkForDuplicates = true)
-        {
+        public function checkFields(Array &$errors, $checkForDuplicates = true) {
             parent::checkFields($errors, $checkForDuplicates);
-            if($this->get('image_url') != '' && $this->get('section_id') != 0)
-            {
+            if($this->get('image_url') != '' && $this->get('section_id') != 0) {
                 // It cannot be both!
                 $errors['image_url']  = __('You cannot both have a URL and a section selected');
                 $errors['section_id'] = __('You cannot both have a URL and a section selected');
@@ -89,8 +101,7 @@
          * Save the settings-panel in the blueprints-section
          * @return bool     True on success, false on failure
          */
-		public function commit()
-        {
+		public function commit() {
 			if(!parent::commit()) return false;
 			
 			$id = $this->get('id');			
@@ -100,6 +111,8 @@
 			$fields['field_id'] = $id;
 			$fields['section_id'] = $this->get('section_id');
             $fields['image_url'] = $this->get('image_url');
+            $fields['unit'] = $this->get('unit');
+            
             if($fields['section_id'] == 0)
             {
                 $fields['section_id'] = null;
@@ -120,14 +133,12 @@
          * @param null $fieldnamePostfix
          * @return void
          */
-		public function displayPublishPanel(&$wrapper, $data=NULL, $flagWithError=NULL, $fieldnamePrefix=NULL, $fieldnamePostfix=NULL)
-        {
+		public function displayPublishPanel(&$wrapper, $data=NULL, $flagWithError=NULL, $fieldnamePrefix=NULL, $fieldnamePostfix=NULL) {
 			$label = Widget::Label($this->get('label'));
 			if($this->get('required') != 'yes') $label->appendChild(new XMLElement('i', __('Optional')));
 			
 			// Get the entries from the section:
-            if($this->get('section_id') != null)
-            {
+            if($this->get('section_id') != null) {
                 $em = new EntryManager($this);
                 $entries = $em->fetch(null, $this->get('section_id'));
                 $options = array(
@@ -136,24 +147,19 @@
                     )
                 );
                 $files = array();
-                foreach($entries as $entry)
-                {
+                foreach($entries as $entry) {
                     $fields = $entry->getData();
                     $id   = $entry->get('id');
                     $name = $id;
-                    foreach($fields as $field)
-                    {
-                        if(isset($field['value']))
-                        {
+                    foreach($fields as $field) {
+                        if(isset($field['value'])) {
                             $name = $field['value'];
                             break;
                         }
                     }
                     // Filename:
-                    foreach($fields as $field)
-                    {
-                        if(isset($field['file']))
-                        {
+                    foreach($fields as $field) {
+                        if(isset($field['file'])) {
                             $files[$id] = $field['file'];
                             break;
                         }
@@ -183,18 +189,27 @@
 			$picker = new XMLElement('div', null, array('class'=>'position_picker'));
 			$label->appendChild($picker);
 			$vars = new XMLElement('div', null, array('class'=>'position_picker_vars'));
-			foreach($files as $id => $val)
-			{
+			foreach($files as $id => $val) {
 				// Get image sizes:
-				$image = $id == 'url' ? URL.$val : URL.'/workspace' . $val;
+				if ($this->get('section_id') != null) {
+					$image = $id == 'url' ? URL.$val : URL.'/workspace' . $val;
+				} else {
+					$image = $val;
+				}
 				list($width, $height) = getimagesize($image);
 				$vars->appendChild(new XMLElement('var', $val.'*'.$width.'*'.$height, array('rel'=>$id)));
 			}
 			$label->appendChild($vars);
+			
 			$value = $data == null ? null : $data['xpos'].','.$data['ypos'];
 			$label->appendChild(Widget::Input('fields['.$this->get('element_name').'][position]', (strlen($value) != 0 ? $value : NULL), 'hidden'));
 			if($flagWithError != NULL) $wrapper->appendChild(Widget::wrapFormElementWithError($label, $flagWithError));
 			else $wrapper->appendChild($label);
+			
+			$unit_field = Widget::Input('fields['.$this->get('element_name').'][unit]', $this->get('unit'), 'hidden');
+            $unit_field->setAttribute('id', 'unit_type');
+			$wrapper->appendChild($unit_field);
+			
 		}
 		
         /**
@@ -204,8 +219,7 @@
          * @param null $entry_id    The entry_id
          * @return int              The status
          */
-		public function checkPostFieldData($data, &$message, $entry_id=NULL)
-        {
+		public function checkPostFieldData($data, &$message, $entry_id=NULL) {
 			$message = NULL;
 			
 			if($this->get('required') == 'yes' && $data['relation_id'] == 0){
@@ -224,21 +238,19 @@
          * @param null $entry_id    The ID of the entry
          * @return array            The result
          */
-		public function processRawFieldData($data, &$status, $simulate = false, $entry_id = null)
-        {
+		public function processRawFieldData($data, &$status, $simulate = false, $entry_id = null) {
 			$status = self::__OK__;
 			
 			$coords = explode(',', $data['position']);
-			
-			if(count($coords) != 2)
-			{
+
+			if(count($coords) != 2) {
 				$coords = array(0, 0);
 			}
 			
 			$result = array(
 				'relation_id' => $data['relation_id'],
 				'xpos' => $coords[0],
-				'ypos' => $coords[1]
+                'ypos' => $coords[1]
 			);
 
             if($data['relation_id'] == -1) {
@@ -257,13 +269,18 @@
          * @param bool $encode      Should encoding be used?
          * @return void
          */
-		public function appendFormattedElement(&$wrapper, $data, $encode=false)
-        {
-			if($this->get('section_id') != null)
-            {
+		public function appendFormattedElement(&$wrapper, $data, $encode=false) {
+
+            if($this->get('unit') == 'percentage') {
+                $unit = '%';
+            } else {
+                $unit = 'px';
+            }
+
+			if($this->get('section_id') != null) {
                 $wrapper->appendChild(
                     new XMLElement(
-                        $this->get('element_name'), null, array('relation-id' => $data['relation_id'], 'xpos' => $data['xpos'], 'ypos' => $data['ypos'])
+                        $this->get('element_name'), null, array('relation-id' => $data['relation_id'], 'xpos' => $data['xpos'], 'ypos' => $data['ypos'], 'unit' => $unit)
                     )
                 );
                 // Also pass the ID to the driver so it can output it in the parameters:
@@ -272,7 +289,7 @@
                 // Static image:
                 $wrapper->appendChild(
                     new XMLElement(
-                        $this->get('element_name'), null, array('image-url' => $this->get('image_url'), 'xpos' => $data['xpos'], 'ypos' => $data['ypos'])
+                        $this->get('element_name'), null, array('image-url' => $this->get('image_url'), 'xpos' => $data['xpos'], 'ypos' => $data['ypos'], 'unit' => $unit)
                     )
                 );
             }
@@ -284,23 +301,18 @@
          * @param null|XMLElement $link     The link
          * @return                          The value to show in the table
          */
-		function prepareTableValue($data, XMLElement $link=NULL)
-        {
-            if($this->get('section_id') != null)
-            {
+		function prepareTableValue($data, XMLElement $link=NULL) {
+            if($this->get('section_id') != null) {
                 $em = new EntryManager($this);
                 $related_item = $em->fetch($data['relation_id']);
-                if($related_item != false)
-                {
+                if($related_item != false) {
                     $fields = $related_item[0]->getData();
                     $info = $this->get();
                     $section = Symphony::Database()->fetchVar('handle', 0, 'SELECT `handle` FROM `tbl_sections` WHERE `id` = '.$info['section_id'].';');
                     $url = URL.'/symphony/publish/'.$section.'/edit/'.$related_item[0]->get('id').'/';
                     $name = 'Unknown entry';
-                    foreach($fields as $field)
-                    {
-                        if(isset($field['value']))
-                        {
+                    foreach($fields as $field) {
+                        if(isset($field['value'])) {
                             $name = $field['value'];
                             break;
                         }
@@ -318,8 +330,7 @@
          * Create the table for each field
          * @return bool
          */
-		public function createTable()
-        {
+		public function createTable() {
 			return Symphony::Database()->query(
 				"CREATE TABLE IF NOT EXISTS `tbl_entries_data_" . $this->get('id') . "` (
                     `id` int(11) unsigned NOT NULL auto_increment,
