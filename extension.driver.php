@@ -20,7 +20,7 @@
 			return array(
 				'name'			=> 'Field: Position Picker',
 				'version'		=> '1.1',
-				'release-date'	=> '2011-06-05',
+				'release-date'	=> '2011-07-21',
 				'author'		=> array(
 					'name'			=> 'Giel Berkers',
 					'website'		=> 'http://www.gielberkers.com',

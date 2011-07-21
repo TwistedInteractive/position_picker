@@ -195,6 +195,10 @@
 					$image = $id == 'url' ? URL.$val : URL.'/workspace' . $val;
 				} else {
 					$image = $val;
+                    // Check if the value is absolute:
+                    if(substr($image, 0, 1) == '/') {
+                        $image = URL.$image;
+                    }
 				}
 				list($width, $height) = getimagesize($image);
 				$vars->appendChild(new XMLElement('var', $val.'*'.$width.'*'.$height, array('rel'=>$id)));
@@ -336,8 +340,8 @@
                     `id` int(11) unsigned NOT NULL auto_increment,
                     `entry_id` int(11) unsigned NOT NULL,
                     `relation_id` int(11) unsigned NULL,
-                    `xpos` int(11) default NULL,
-                    `ypos` int(11) default NULL,
+                    `xpos` float default NULL,
+                    `ypos` float default NULL,
                     PRIMARY KEY  (`id`),
                     KEY `entry_id` (`entry_id`),
                     KEY `relation_id` (`relation_id`)

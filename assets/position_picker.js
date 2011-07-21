@@ -17,7 +17,7 @@ jQuery(function(){
 			var originalWidth = info[1];
 			var originalHeight = info[2];
 			var ratio = maxWidth / originalWidth;
-			
+
 			var imageWidth = originalWidth * ratio;
 			var imageHeight = originalHeight * ratio;
 
@@ -30,21 +30,23 @@ jQuery(function(){
 				$("div.position_picker img.pic").click(function(e){
 					var pixelOffsetX = e.pageX - $(this).offset().left;
 			        var pixelOffsetY = e.pageY - $(this).offset().top;
-			        
-					var offsetX = (pixelOffsetX / imageWidth)*100;
-			        var offsetY = (pixelOffsetY / imageHeight)*100;
+
+					var offsetX = (pixelOffsetX / imageWidth) * 100;
+			        var offsetY = (pixelOffsetY / imageHeight) * 100;
 					
-					var cursorSize = (3.2 * ratio) / 2;
-					
-					$("img.crosshair", $(this).parent()).css({left: (offsetX - cursorSize) + '%', top: (offsetY - cursorSize) + '%'});
+					// var cursorSize = (3.2 * ratio) / 2;
+
+					// $("img.crosshair", $(this).parent()).css({left: (offsetX - cursorSize) + '%', top: (offsetY - cursorSize) + '%'});
+                    $("img.crosshair", $(this).parent()).css({marginLeft: pixelOffsetX - 16, marginTop: pixelOffsetY - 16});
 					$("input[type=hidden]", $(this).parent().parent()).val(offsetX + ',' + offsetY);
-					console.log($("input[type=hidden]", $(this).parent().parent()).val());
+					// console.log($("input[type=hidden]", $(this).parent().parent()).val());
 					return false;
 				});
 				coords = $("input[type=hidden]", $(this).parent()).val().split(',');
 				if(coords.length == 2) {
-					var cursorSize = (3.2 * ratio) / 2;
-					$("div.position_picker img.crosshair", $(this).parent()).css({left: (coords[0] - cursorSize) + "%", top: (coords[1] - cursorSize) + "%"});
+					var xPos = imageWidth * (coords[0]/100);
+                    var yPos = imageHeight * (coords[1]/100);
+					$("div.position_picker img.crosshair", $(this).parent()).css({marginLeft: xPos - 16, marginTop: yPos - 16});
 				}
 			} else{
 				$("div.position_picker img.pic").click(function(e){
@@ -52,7 +54,7 @@ jQuery(function(){
 					var offsetY = e.pageY - $(this).offset().top;
 					$("img.crosshair", $(this).parent()).css({marginLeft: offsetX - 16, marginTop: offsetY - 16});
 					$("input[type=hidden]", $(this).parent().parent()).val(Math.round(offsetX / ratio) + ',' + Math.round(offsetY / ratio));
-					console.log($("input[type=hidden]", $(this).parent().parent()).val());
+					// console.log($("input[type=hidden]", $(this).parent().parent()).val());
 					return false;
 				});
 				coords = $("input[type=hidden]", $(this).parent()).val().split(',');
