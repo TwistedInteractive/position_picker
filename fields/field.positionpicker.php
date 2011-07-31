@@ -55,7 +55,7 @@
 				$group->appendChild($label);
 			}
 
-			$label = Widget::Label(__('Or select a section to dynamicly select an image from:'));
+			$label = Widget::Label(__('Or select a section to dynamically select an image from:'));
 			$selectBox = Widget::Select('fields['.$this->get('sortorder').'][section_id]', $options);
 			$label->appendChild($selectBox);
 			if(isset($errors['section_id'])) {
@@ -189,19 +189,34 @@
 			$picker = new XMLElement('div', null, array('class'=>'position_picker'));
 			$label->appendChild($picker);
 			$vars = new XMLElement('div', null, array('class'=>'position_picker_vars'));
+
 			foreach($files as $id => $val) {
+				$attributes = array('rel' => $id);
+
 				// Get image sizes:
 				if ($this->get('section_id') != null) {
-					$image = $id == 'url' ? URL.$val : URL.'/workspace' . $val;
-				} else {
+					$image = $id == 'url' ? DOCROOT . $val : DOCROOT . '/workspace' . $val;
+					list($width, $height) = getimagesize($image);
+
+					$vars->appendChild(
+						new XMLElement('var', $width, array_merge($attributes, array('class' => 'width')))
+					);
+					$vars->appendChild(
+						new XMLElement('var', $height, array_merge($attributes, array('class' => 'height')))
+					);
+				}
+				else {
 					$image = $val;
 					// Check if the value is absolute:
 					if(substr($image, 0, 1) == '/') {
 						$image = URL.$image;
 					}
 				}
-				list($width, $height) = getimagesize($image);
-				$vars->appendChild(new XMLElement('var', $val.'*'.$width.'*'.$height, array('rel'=>$id)));
+
+				$vars->appendChild(
+					new XMLElement('var', $val, array_merge($attributes, array('class' => 'path')))
+				);
+
 			}
 			$label->appendChild($vars);
 
@@ -262,7 +277,6 @@
 				$data['relation_id'] = null;
 			}
 
-
 			return $result;
 		}
 
@@ -274,6 +288,7 @@
 		 * @return void
 		 */
 		public function appendFormattedElement(&$wrapper, $data, $encode=false) {
+			if(empty($data)) return;
 
 			if($this->get('unit') == 'percentage') {
 				$unit = '%';
@@ -306,6 +321,14 @@
 		 * @return							The value to show in the table
 		 */
 		function prepareTableValue($data, XMLElement $link=NULL) {
+			if(empty($data)) return;
+
+			if($this->get('unit') == 'percentage') {
+				$unit = '%';
+			} else {
+				$unit = 'px';
+			}
+
 			if($this->get('section_id') != null) {
 				$em = new EntryManager($this);
 				$related_item = $em->fetch($data['relation_id']);
@@ -322,11 +345,11 @@
 						}
 					}
 
-					$value = '<a href="'.$url.'">'.$name.'</a> - <em>('.$data['xpos'].', '.$data['ypos'].')</em>';
+					$value = '<a href="'.$url.'">'.$name.'</a> - <em>'.$data['xpos'].$unit.', '.$data['ypos'].$unit.'</em>';
 					return(trim($value));
 				}
 			} else {
-				return $data['xpos'].', '.$data['ypos'];
+				return $data['xpos'].$unit.', '.$data['ypos'].$unit;
 			}
 		}
 
