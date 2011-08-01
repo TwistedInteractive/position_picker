@@ -2,17 +2,6 @@
 
 	class extension_position_picker extends Extension {
 
-		private $_ids;
-
-		/**
-		 * The constructor
-		 * @param  $context		The context provided by Symphony
-		 */
-		public function __construct($context) {
-			parent::__construct($context);
-			$this->_ids = array();
-		}
-
 		/**
 		 * About the author
 		 */
@@ -35,7 +24,7 @@
 		 * @return void
 		 */
 		public function uninstall() {
-			$this->_Parent->Database->query("DROP TABLE `tbl_fields_positionpicker`");
+			Symphony::Database()->query("DROP TABLE `tbl_fields_positionpicker`");
 		}
 
 		/**
@@ -43,7 +32,7 @@
 		 * @return void
 		 */
 		public function install() {
-			$this->_Parent->Database->query("
+			Symphony::Database()->query("
 				CREATE TABLE IF NOT EXISTS `tbl_fields_positionpicker` (
 					`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
 					`field_id` INT(11) UNSIGNED NOT NULL,
@@ -68,34 +57,8 @@
 					'page' => '/backend/',
 					'delegate' => 'InitaliseAdminPageHead',
 					'callback' => 'addScriptToHead'
-				),
-				array(
-					'page' => '/frontend/',
-					'delegate' => 'FrontendParamsPostResolve',
-					'callback' => 'addParameters'
 				)
 			);
-		}
-
-		/**
-		 * Add the id's of all picker instances to the frontend, to provide a way to retreive the related entries.
-		 * @param  $context		The context, provided by Symphony
-		 * @return void
-		 */
-		public function addParameters($context) {
-			// Add the used ID's as a parameter so they can be used by other data sources:
-			$this->_ids = array_unique($this->_ids);
-			sort($this->_ids);
-			$context['params']['position-picker-ids'] = implode(', ', $this->_ids);
-		}
-
-		/**
-		 * Adds an ID to the arry of ID's that is used for the parameter output
-		 * @param  $id			The ID
-		 * @return void
-		 */
-		public function addID($id) {
-			$this->_ids[] = $id;
 		}
 
 		/**
@@ -109,4 +72,4 @@
 		}
 
 	}
-?>
+

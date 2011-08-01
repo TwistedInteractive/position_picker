@@ -4,8 +4,6 @@
 
 	Class fieldPositionpicker extends Field {
 
-		protected $_driver;
-
 		/**
 		 * The constructor
 		 * @param  $parent		The parent, provided by Symphony
@@ -14,14 +12,13 @@
 			parent::__construct($parent);
 			$this->_name = __('Position Picker');
 			$this->_required = true;
-			// Compatibility for both Symphony 2.1.2 as 2.2:
-			if(isset($this->_engine)) {
-				$this->_driver = $this->_engine->ExtensionManager->create('position_picker');
-			} else {
-				$this->_driver = Symphony::ExtensionManager()->create('position_picker');
-			}
 
 			$this->set('required', 'no');
+			$this->set('section_id', null);
+		}
+
+		public function allowDatasourceParamOutput() {
+			return !is_null($this->get('section_id')) ? true : false;
 		}
 
 		/**
@@ -113,10 +110,10 @@
 			$fields['image_url'] = $this->get('image_url');
 			$fields['unit'] = $this->get('unit');
 
-			if($fields['section_id'] == 0)
-			{
+			if($fields['section_id'] == 0) {
 				$fields['section_id'] = null;
-			} else {
+			}
+			else {
 				$fields['image_url'] = null;
 			}
 
@@ -290,21 +287,16 @@
 		public function appendFormattedElement(&$wrapper, $data, $encode=false) {
 			if(empty($data)) return;
 
-			if($this->get('unit') == 'percentage') {
-				$unit = '%';
-			} else {
-				$unit = 'px';
-			}
+			$unit = ($this->get('unit') == 'percentage') ? '%' : 'px';
 
-			if($this->get('section_id') != null) {
+			if(!is_null($this->get('section_id'))) {
 				$wrapper->appendChild(
 					new XMLElement(
 						$this->get('element_name'), null, array('relation-id' => $data['relation_id'], 'xpos' => $data['xpos'], 'ypos' => $data['ypos'], 'unit' => $unit)
 					)
 				);
-				// Also pass the ID to the driver so it can output it in the parameters:
-				$this->_driver->addID($data['relation_id']);
-			} else {
+			}
+			else {
 				// Static image:
 				$wrapper->appendChild(
 					new XMLElement(
@@ -323,13 +315,9 @@
 		function prepareTableValue($data, XMLElement $link=NULL) {
 			if(empty($data)) return;
 
-			if($this->get('unit') == 'percentage') {
-				$unit = '%';
-			} else {
-				$unit = 'px';
-			}
+			$unit = ($this->get('unit') == 'percentage') ? '%' : 'px';
 
-			if($this->get('section_id') != null) {
+			if(!is_null($this->get('section_id'))) {
 				$em = new EntryManager($this);
 				$related_item = $em->fetch($data['relation_id']);
 				if($related_item != false) {
@@ -337,7 +325,8 @@
 					$info = $this->get();
 					$section = Symphony::Database()->fetchVar('handle', 0, 'SELECT `handle` FROM `tbl_sections` WHERE `id` = '.$info['section_id'].';');
 					$url = URL.'/symphony/publish/'.$section.'/edit/'.$related_item[0]->get('id').'/';
-					$name = 'Unknown entry';
+					$name = __('Unknown entry');
+
 					foreach($fields as $field) {
 						if(isset($field['value'])) {
 							$name = $field['value'];
@@ -348,9 +337,14 @@
 					$value = '<a href="'.$url.'">'.$name.'</a> - <em>'.$data['xpos'].$unit.', '.$data['ypos'].$unit.'</em>';
 					return(trim($value));
 				}
-			} else {
+			}
+			else {
 				return $data['xpos'].$unit.', '.$data['ypos'].$unit;
 			}
+		}
+
+		public function getParameterPoolValue($data) {
+			return $data['relation_id'];
 		}
 
 		/**
