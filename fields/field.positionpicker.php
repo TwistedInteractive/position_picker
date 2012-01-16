@@ -8,8 +8,8 @@
 		 * The constructor
 		 * @param  $parent		The parent, provided by Symphony
 		 */
-		public function __construct(&$parent) {
-			parent::__construct($parent);
+		public function __construct() {
+			parent::__construct();
 			$this->_name = __('Position Picker');
 			$this->_required = true;
 
@@ -30,9 +30,10 @@
 		public function displaySettingsPanel(&$wrapper, $errors = null) {
 			parent::displaySettingsPanel($wrapper, $errors);
 
+            $wrapper->appendChild($this->buildPublishLabel());
+
 			// Show the sections:
-			$sm = new SectionManager($this);
-			$sections = $sm->fetch();
+			$sections = SectionManager::fetch();
 			$options = array();
 			$options[] = array('0', false, ' ');
 
@@ -63,7 +64,6 @@
 
 			$wrapper->appendChild($group);
 
-
 			$label = Widget::Label('Unit type');
 			$units = array(
 				array(
@@ -79,7 +79,6 @@
 			);
 			$label->appendChild(Widget::Select('fields['.$this->get('sortorder').'][unit]', $units));
 			$wrapper->appendChild($label);
-
 
 			$this->appendRequiredCheckbox($wrapper);
 			$this->appendShowColumnCheckbox($wrapper);
@@ -136,8 +135,7 @@
 
 			// Get the entries from the section:
 			if($this->get('section_id') != null) {
-				$em = new EntryManager($this);
-				$entries = $em->fetch(null, $this->get('section_id'));
+				$entries = EntryManager::fetch(null, $this->get('section_id'));
 				$options = array(
 					array(
 						0, false, __('-- Choose an image --')
@@ -318,8 +316,7 @@
 			$unit = ($this->get('unit') == 'percentage') ? '%' : 'px';
 
 			if(!is_null($this->get('section_id'))) {
-				$em = new EntryManager($this);
-				$related_item = $em->fetch($data['relation_id']);
+				$related_item = EntryManager::fetch($data['relation_id']);
 				if($related_item != false) {
 					$fields = $related_item[0]->getData();
 					$info = $this->get();

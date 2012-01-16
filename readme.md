@@ -1,6 +1,6 @@
 # Position Picker #
 
-Version 1.1
+Version 1.2
 
 ## What does this extension do? ##
 

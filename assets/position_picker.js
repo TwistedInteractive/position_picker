@@ -1,3 +1,11 @@
+var position_picker_ratio;
+var position_picker_interval_ID;
+
+function checkImageSize()
+{
+
+}
+
 jQuery(function(){
 	var $ = jQuery;
 		maxWidth = $("div.field-positionpicker").width();

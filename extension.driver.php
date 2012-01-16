@@ -8,8 +8,8 @@
 		public function about() {
 			return array(
 				'name'			=> 'Field: Position Picker',
-				'version'		=> '1.1',
-				'release-date'	=> '2011-07-21',
+				'version'		=> '1.2',
+				'release-date'	=> '2011-12-16',
 				'author'		=> array(
 					'name'			=> 'Giel Berkers',
 					'website'		=> 'http://www.gielberkers.com',
@@ -67,8 +67,8 @@
 		 * @return void
 		 */
 		public function addScriptToHead($context) {
-			Administration::instance()->Page->addScriptToHead(URL.'/extensions/position_picker/assets/position_picker.js', 301, true);
-			Administration::instance()->Page->addStylesheetToHead(URL.'/extensions/position_picker/assets/position_picker.css', 'screen', 302);
+			Administration::instance()->Page->addScriptToHead(URL.'/extensions/position_picker/assets/position_picker.js');
+			Administration::instance()->Page->addStylesheetToHead(URL.'/extensions/position_picker/assets/position_picker.css', 'screen');
 		}
 
 	}
