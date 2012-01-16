@@ -30,7 +30,7 @@
 		public function displaySettingsPanel(&$wrapper, $errors = null) {
 			parent::displaySettingsPanel($wrapper, $errors);
 
-            $wrapper->appendChild($this->buildPublishLabel());
+            // $wrapper->appendChild($this->buildPublishLabel());
 
 			// Show the sections:
 			$sections = SectionManager::fetch();
