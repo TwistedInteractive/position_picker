@@ -9,7 +9,13 @@
 		 * @param  $parent		The parent, provided by Symphony
 		 */
 		public function __construct() {
-			parent::__construct();
+            // Backward compatibilty with pre-S2.3:
+            try {
+                parent::__construct();
+            } catch(Exception $e) {
+                parent::__construct(Symphony::Engine());
+            }
+
 			$this->_name = __('Position Picker');
 			$this->_required = true;
 
