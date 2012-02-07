@@ -9,11 +9,12 @@
 		 * @param  $parent		The parent, provided by Symphony
 		 */
 		public function __construct() {
+
             // Backward compatibilty with pre-S2.3:
             try {
-                parent::__construct();
-            } catch(Exception $e) {
                 parent::__construct(Symphony::Engine());
+            } catch(Exception $e) {
+                parent::__construct();
             }
 
 			$this->_name = __('Position Picker');
@@ -39,7 +40,12 @@
             // $wrapper->appendChild($this->buildPublishLabel());
 
 			// Show the sections:
-			$sections = SectionManager::fetch();
+            try {
+                $sm = new SectionManager($this);
+    			$sections = $sm->fetch();
+            } catch(Exception $e) {
+                $sections = SectionManager::fetch();
+            }
 			$options = array();
 			$options[] = array('0', false, ' ');
 
