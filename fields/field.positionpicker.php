@@ -196,21 +196,13 @@
 			$picker = new XMLElement('div', null, array('class'=>'position_picker'));
 			$label->appendChild($picker);
 			$vars = new XMLElement('div', null, array('class'=>'position_picker_vars'));
-
+            
 			foreach($files as $id => $val) {
 				$attributes = array('rel' => $id);
 
 				// Get image sizes:
 				if ($this->get('section_id') != null) {
 					$image = $id == 'url' ? DOCROOT . $val : DOCROOT . '/workspace' . $val;
-					list($width, $height) = getimagesize($image);
-
-					$vars->appendChild(
-						new XMLElement('var', $width, array_merge($attributes, array('class' => 'width')))
-					);
-					$vars->appendChild(
-						new XMLElement('var', $height, array_merge($attributes, array('class' => 'height')))
-					);
 				}
 				else {
 					$image = $val;
@@ -220,11 +212,20 @@
 					}
 				}
 
+                list($width, $height) = getimagesize($image);
+                $vars->appendChild(
+                    new XMLElement('var', $width, array_merge($attributes, array('class' => 'width')))
+                );
+                $vars->appendChild(
+                    new XMLElement('var', $height, array_merge($attributes, array('class' => 'height')))
+                );
+
 				$vars->appendChild(
 					new XMLElement('var', $val, array_merge($attributes, array('class' => 'path')))
 				);
 
 			}
+
 			$label->appendChild($vars);
 
 			$value = $data == null ? null : $data['xpos'].','.$data['ypos'];
