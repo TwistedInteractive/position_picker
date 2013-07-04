@@ -2,16 +2,12 @@
 <extension id="position_picker" xmlns="http://symphony-cms.com/schemas/extension/1.0">
 	<name>Position Picker Field</name>
 	<description>A pixel/percentage picker.</description>
-	<repo type="github">https://github.com/kanduvisla/position_picker</repo>
+	<repo type="github">https://github.com/TwistedInteractive/position_picker</repo>
     <types>
         <type>Field</type>
     </types>
 	<authors>
-		<author>
-			<name github="kanduvisla" symphony="kanduvisla">Giel Berkers</name>
-            <email>info@gielberkers.com</email>
-            <website>http://www.gielberkers.com</website>
-		</author>
+		
 	</authors>
 	<releases>
 		<release version="1.2" date="2011-12-16" min="2.3"/>
